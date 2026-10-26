@@ -1,4 +1,4 @@
-# GOG Downloader PowerShell Toolkit 🎮
+# GOG (gogg) Downloader PowerShell Toolkit 🎮
 
 Choose your language / Wähle deine Sprache:
 - 🌐 [English](#-english-version)
