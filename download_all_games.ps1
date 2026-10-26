@@ -1,7 +1,7 @@
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 # To run the script, open PowerShell and execute the following command:
 # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; .\download_all_games.ps1
-
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Colors
 $RED = "`e[31m"
@@ -26,7 +26,7 @@ $INCLUDE_EXTRA_CONTENT = $true
 $RESUME_DOWNLOAD = $true
 $NUM_THREADS = 10 # Number of worker threads for downloading
 $FLATTEN = $true
-$OUTPUT_DIR = "X:/ISO/Good Old Games/" # Output directory
+$OUTPUT_DIR = "" # Output directory example "X:/ISO/Good Old Games/"
 
 # Function to clean up the CSV file
 function Cleanup
