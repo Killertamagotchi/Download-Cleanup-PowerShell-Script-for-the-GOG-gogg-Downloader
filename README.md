@@ -60,10 +60,6 @@ If your games are stored in a custom directory or if the `gogg` downloader requi
 Downloads:  
 * [gogg](https://github.com/habedi/gogg)
 
-### License
-
-This project is licensed under the [MIT License](LICENSE) – feel free to use, modify, and distribute it.
-
 ---
 
 ## 🇩🇪 Deutsche Version
@@ -119,7 +115,3 @@ Sollten deine Spiele in einem benutzerdefinierten Verzeichnis liegen oder der `g
 
 Downloads:  
 * [gogg](https://github.com/habedi/gogg)
-
-### Lizenz
-
-Dieses Projekt ist unter der [MIT Lizenz](LICENSE) lizenziert – freie Nutzung, Modifikation und Weitergabe ausdrücklich erlaubt.
