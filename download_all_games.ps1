@@ -17,7 +17,6 @@ $env:DEBUG_GOGG = 1 # Debug mode enabled
 $GOGG = ".\gogg.exe" # Path to Gogg's executable file (for example, ".\bin\gogg")
 
 # Download options
-# NEU: Liste aller gültigen Sprachcodes statt "all"
 # $LANGS = @('en', 'de', 'fr', 'es', 'it', 'ru', 'pl', 'pt-BR', 'zh-Hans', 'ja', 'ko') 
 $LANGS = @('en', 'de') 
 $PLATFORM = "all" # Platform Windows
@@ -57,18 +56,15 @@ if (-not $latest_csv)
 
 Write-Host "${GREEN}Using catalogue file: $( $latest_csv.Name )${NC}"
 
-# Download each game listed in catalogue file, skipping the first line
 Get-Content $latest_csv.FullName | Select-Object -Skip 1 | ForEach-Object {
   $fields = $_ -split ","
   $game_id = $fields[0]
   $game_title = $fields[1]
   Write-Host "${YELLOW}Game ID: $game_id, Title: $game_title${NC}"
   
-  # NEU: Schleife über alle definierten Sprachen für das aktuelle Spiel
   foreach ($current_lang in $LANGS) {
     Write-Host "${YELLOW}  -> Downloade Sprache: $current_lang${NC}"
     
-    # Hier wird nun --lang=$current_lang anstelle des alten $LANG übergeben
     & $GOGG download $game_id $OUTPUT_DIR --platform=$PLATFORM --lang=$current_lang `
           --dlcs=$INCLUDE_DLC --extras=$INCLUDE_EXTRA_CONTENT --resume=$RESUME_DOWNLOAD --threads=$NUM_THREADS `
           --flatten=$FLATTEN --keep-latest=true
