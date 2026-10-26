@@ -57,6 +57,9 @@ If your games are stored in a custom directory or if the `gogg` downloader requi
 \$GoggPath = "gogg"
 ```
 
+Downloads:  
+* [gogg](https://github.com/habedi/gogg)
+
 ### License
 
 This project is licensed under the [MIT License](LICENSE) – feel free to use, modify, and distribute it.
@@ -113,6 +116,9 @@ Sollten deine Spiele in einem benutzerdefinierten Verzeichnis liegen oder der `g
 \$DownloadPath = "D:\GOG_Downloads"
 \$GoggPath = "gogg"
 ```
+
+Downloads:  
+* [gogg](https://github.com/habedi/gogg)
 
 ### Lizenz
 
