@@ -26,7 +26,7 @@ $INCLUDE_EXTRA_CONTENT = $true
 $RESUME_DOWNLOAD = $true
 $NUM_THREADS = 10 # Number of worker threads for downloading
 $FLATTEN = $true
-$OUTPUT_DIR = "" # Output directory example "X:/ISO/Good Old Games/"
+$OUTPUT_DIR = "" # Output directory example "X:\ISO\Good Old Games"
 
 # Function to clean up the CSV file
 function Cleanup
