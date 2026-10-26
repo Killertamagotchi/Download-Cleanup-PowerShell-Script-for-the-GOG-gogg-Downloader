@@ -1,36 +1,35 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # ==============================================================================
-# PFAD ZU DEINEM WINDOWS- oder NAS-LAUFWERK ANPASSEN
+# ADJUST THE PATH TO YOUR WINDOWS OR NAS DRIVE HERE
 # ==============================================================================
-$TargetDir = "X:\ISO\Good Old Games"
+$TargetDir = "" # Output directory example "X:\ISO\Good Old Games"
 
-# Auf $true lassen für eine Simulation. Auf $false setzen zum echten Löschen!
-# $DryRun = $true
-$DryRun = $false
+# Keep as $true for a simulation. Set to $false to actually delete files!
+$DryRun = $true
 
-# RegEx-Suchmuster in Variablen auslagern, um Parser-Fehler zu vermeiden
+# Store RegEx search patterns in variables to avoid script parser errors
 $PatternBuild = "\((?<build>\d+)\)"
 $PatternMac   = "english_(?<version>\d+_\d+|macOS)"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " Starte GOG-Cleanup in ALLEN Unterordnern von: $TargetDir" -ForegroundColor Cyan
+Write-Host " Starting GOG cleanup in ALL subfolders of: $TargetDir" -ForegroundColor Cyan
 if ($DryRun) {
-    Write-Host " -> MODUS: SIMULATION (Es wird nichts gelöscht!)" -ForegroundColor Yellow
+    Write-Host " -> MODE: SIMULATION (No files will be deleted!)" -ForegroundColor Yellow
 } else {
-    Write-Host " -> MODUS: SCHARF (Dateien werden gelöscht!)" -ForegroundColor Red
+    Write-Host " -> MODE: LIVE (Files WILL be deleted!)" -ForegroundColor Red
 }
 Write-Host "========================================================================" -ForegroundColor Cyan
 
-# Holt alle Spiele-Unterordner
+# Fetch all game subfolders
 $GameFolders = Get-ChildItem -Path $TargetDir -Directory
 
 foreach ($Folder in $GameFolders) {
     Write-Host ""
-    Write-Host "--- Verarbeite Spiele-Ordner: $($Folder.Name) ---" -ForegroundColor Magenta
+    Write-Host "--- Processing game folder: $($Folder.Name) ---" -ForegroundColor Magenta
     
     # --------------------------------------------------------------------------
-    # 1. WINDOWS BASE-INSTALLER & BIN-DATEIEN REINIGEN
+    # 1. CLEAN UP WINDOWS BASE INSTALLERS & BIN FILES
     # --------------------------------------------------------------------------
     $LatestWinSetup = Get-ChildItem -Path $Folder.FullName -File -Filter "setup_*_64bit_*.exe" | 
                       Where-Object { $_.Name -notmatch "phantom_liberty" -and $_.Name -notmatch "\.part$" } |
@@ -39,20 +38,20 @@ foreach ($Folder in $GameFolders) {
     if ($LatestWinSetup) {
         if ($LatestWinSetup.Name -match $PatternBuild) {
             $CurrentBuild = $Matches.build
-            Write-Host "   [Windows] Aktuellste Version: Build $CurrentBuild ($($LatestWinSetup.Name))" -ForegroundColor Gray
+            Write-Host "   [Windows] Latest version found: Build $CurrentBuild ($($LatestWinSetup.Name))" -ForegroundColor Gray
 
             $OldFiles = Get-ChildItem -Path $Folder.FullName -File | 
                         Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".bin") -and $_.Name -like "setup_*" -and $_.Name -notmatch "phantom_liberty" -and $_.Name -notmatch $CurrentBuild -and $_.Name -notmatch "\.part$" }
 
             foreach ($File in $OldFiles) {
-                Write-Host "   [-] Entferne alte Setup-Datei: $($File.Name)" -ForegroundColor DarkYellow
+                Write-Host "   [-] Removing old setup file: $($File.Name)" -ForegroundColor DarkYellow
                 if (-not $DryRun) { Remove-Item -Path $File.FullName -Force }
             }
         }
     }
 
     # --------------------------------------------------------------------------
-    # 2. DLC-INSTALLER REINIGEN
+    # 2. CLEAN UP DLC INSTALLERS
     # --------------------------------------------------------------------------
     $LatestDlcSetup = Get-ChildItem -Path $Folder.FullName -File -Filter "setup_*.exe" | 
                       Where-Object { ($_.Name -match "phantom_liberty" -or $_.Name -like "dlc_*") -and $_.Name -notmatch "\.part$" } |
@@ -61,20 +60,20 @@ foreach ($Folder in $GameFolders) {
     if ($LatestDlcSetup) {
         if ($LatestDlcSetup.Name -match $PatternBuild) {
             $DlcBuild = $Matches.build
-            Write-Host "   [DLC] Aktuellste DLC-Version: Build $DlcBuild" -ForegroundColor Gray
+            Write-Host "   [DLC] Latest DLC version found: Build $DlcBuild" -ForegroundColor Gray
 
             $OldDlcFiles = Get-ChildItem -Path $Folder.FullName -File | 
                            Where-Object { ($_.Name -match "phantom_liberty" -or $_.Name -like "dlc_*") -and ($_.Extension -eq ".exe" -or $_.Extension -eq ".bin") -and $_.Name -notmatch $DlcBuild -and $_.Name -notmatch "\.part$" }
 
             foreach ($DlcFile in $OldDlcFiles) {
-                Write-Host "   [-] Entferne alte DLC-Datei: $($DlcFile.Name)" -ForegroundColor DarkYellow
+                Write-Host "   [-] Removing old DLC file: $($DlcFile.Name)" -ForegroundColor DarkYellow
                 if (-not $DryRun) { Remove-Item -Path $DlcFile.FullName -Force }
             }
         }
     }
 
     # --------------------------------------------------------------------------
-    # 3. MAC-INSTALLER REINIGEN (.pkg)
+    # 3. CLEAN UP MAC INSTALLERS (.pkg)
     # --------------------------------------------------------------------------
     $LatestMacPkg = Get-ChildItem -Path $Folder.FullName -File -Filter "*english_*_mac*.pkg" | 
                     Where-Object { $_.Name -notmatch "\.part$" } |
@@ -83,31 +82,31 @@ foreach ($Folder in $GameFolders) {
     if ($LatestMacPkg) {
         if ($LatestMacPkg.Name -match $PatternMac) {
             $MacVersion = $Matches.version
-            Write-Host "   [Mac] Aktuellste Mac-Version: $MacVersion" -ForegroundColor Gray
+            Write-Host "   [Mac] Latest Mac version found: $MacVersion" -ForegroundColor Gray
 
             $OldMacFiles = Get-ChildItem -Path $Folder.FullName -File -Filter "*.pkg" | 
                            Where-Object { $_.Name -notmatch $MacVersion -and $_.Name -notmatch "\.part$" }
 
             foreach ($MacFile in $OldMacFiles) {
-                Write-Host "   [-] Entferne altes Mac-Paket: $($MacFile.Name)" -ForegroundColor DarkYellow
+                Write-Host "   [-] Removing old Mac package: $($MacFile.Name)" -ForegroundColor DarkYellow
                 if (-not $DryRun) { Remove-Item -Path $MacFile.FullName -Force }
             }
         }
     }
 
     # --------------------------------------------------------------------------
-    # 4. INKREMENTELLE PATCHES ENTFERNEN (.exe & .bin Patches)
+    # 4. REMOVE INCREMENTAL PATCHES (.exe & .bin patches)
     # --------------------------------------------------------------------------
     $Patches = Get-ChildItem -Path $Folder.FullName -File | 
                Where-Object { $_.Name -like "patch_*" -and ($_.Extension -eq ".exe" -or $_.Extension -eq ".bin") }
 
     foreach ($Patch in $Patches) {
-        Write-Host "   [-] Entferne alten inkrementellen Patch: $($Patch.Name)" -ForegroundColor DarkYellow
+        Write-Host "   [-] Removing old incremental patch: $($Patch.Name)" -ForegroundColor DarkYellow
         if (-not $DryRun) { Remove-Item -Path $Patch.FullName -Force }
     }
 }
 
 Write-Host ""
 Write-Host "========================================================================" -ForegroundColor Green
-Write-Host " Cleanup für alle Spiele-Ordner beendet!" -ForegroundColor Green
+Write-Host " Cleanup completed for all game folders!" -ForegroundColor Green
 Write-Host "========================================================================" -ForegroundColor Green
